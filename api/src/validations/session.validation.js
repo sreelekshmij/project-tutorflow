@@ -37,7 +37,31 @@ const updateSessionSchema = Joi.object({
     "object.min": "At least one field is required for update",
   });
 
+const updateSessionStatusSchema = Joi.object({
+  status: Joi.string()
+    .valid("in_progress", "completed", "ai_reviewed")
+    .required()
+    .messages({
+      "any.only":
+        "Status must be in_progress, completed, or ai_reviewed",
+      "any.required": "Status is required",
+    }),
+});
+
+const updateSessionNotesSchema = Joi.object({
+  notes: Joi.string()
+    .max(10000)
+    .allow("")
+    .required()
+    .messages({
+      "string.max": "Notes cannot exceed 10000 characters",
+      "any.required": "Notes are required",
+    }),
+});
+
 module.exports = {
   createSessionSchema,
   updateSessionSchema,
+  updateSessionStatusSchema,
+  updateSessionNotesSchema,
 };

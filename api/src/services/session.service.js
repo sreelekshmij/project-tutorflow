@@ -253,9 +253,142 @@ const updateSession = async (
   return session;
 };
 
+const updateSessionStatus = async (
+  sessionId,
+  tutorId,
+  newStatus
+) => {
+  const { data: session, error } = await supabase
+    .from("sessions")
+    .select("id, status")
+    .eq("id", sessionId)
+    .eq("tutor_id", tutorId)
+    .single();
+
+  if (error) {
+    if (error.code === "PGRST116") {
+      throw new Error("Session not found");
+    }
+
+    throw new Error(error.message);
+  }
+
+  const allowedTransitions = {
+    scheduled: ["in_progress"],
+    in_progress: ["completed"],
+    completed: ["ai_reviewed"],
+    ai_reviewed: [],
+  };
+
+  const allowedNextStatuses = allowedTransitions[session.status];
+
+  if (!allowedNextStatuses.includes(newStatus)) {
+    throw new Error(
+      `Invalid status transition: ${session.status} → ${newStatus}`
+    );
+  }
+
+  const { data: updatedSession, error: updateError } =
+    await supabase
+      .from("sessions")
+      .update({
+        status: newStatus,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", sessionId)
+      .eq("tutor_id", tutorId)
+      .select(
+        `
+        id,
+        tutor_id,
+        student_id,
+        scheduled_at,
+        topic,
+        status,
+        notes,
+        ai_plan,
+        ai_summary,
+        ai_homework,
+        ai_next_focus,
+        created_at,
+        updated_at
+        `
+      )
+      .single();
+
+  if (updateError) {
+    throw new Error(updateError.message);
+  }
+
+  return updatedSession;
+};
+
+const updateSessionNotes = async (
+  sessionId,
+  tutorId,
+  notes
+) => {
+  const { data: session, error: sessionError } = await supabase
+    .from("sessions")
+    .select("id, status")
+    .eq("id", sessionId)
+    .eq("tutor_id", tutorId)
+    .single();
+
+  if (sessionError) {
+    if (sessionError.code === "PGRST116") {
+      throw new Error("Session not found");
+    }
+
+    throw new Error(sessionError.message);
+  }
+
+  if (session.status !== "in_progress") {
+    throw new Error(
+      "Notes can only be updated while the session is in progress"
+    );
+  }
+
+  const { data: updatedSession, error: updateError } =
+    await supabase
+      .from("sessions")
+      .update({
+        notes,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", sessionId)
+      .eq("tutor_id", tutorId)
+      .select(
+        `
+        id,
+        tutor_id,
+        student_id,
+        scheduled_at,
+        topic,
+        status,
+        notes,
+        ai_plan,
+        ai_summary,
+        ai_homework,
+        ai_next_focus,
+        created_at,
+        updated_at
+        `
+      )
+      .single();
+
+  if (updateError) {
+    throw new Error(updateError.message);
+  }
+
+  return updatedSession;
+};
+
 module.exports = {
   createSession,
   getSessions,
   getSessionById,
   updateSession,
+  updateSessionStatus,
+  updateSessionNotes,
 };

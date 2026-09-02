@@ -120,9 +120,84 @@ const updateSession = async (req, res) => {
   }
 };
 
+const updateSessionStatus = async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+    const { status } = req.body;
+
+    const session = await sessionService.updateSessionStatus(
+      sessionId,
+      req.user.id,
+      status
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Session status updated successfully",
+      data: session,
+    });
+  } catch (error) {
+    console.error("Update session status error:", error.message);
+
+    let statusCode = 500;
+
+    if (error.message === "Session not found") {
+      statusCode = 404;
+    } else if (
+      error.message.startsWith("Invalid status transition")
+    ) {
+      statusCode = 400;
+    }
+
+    return res.status(statusCode).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const updateSessionNotes = async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+    const { notes } = req.body;
+
+    const session = await sessionService.updateSessionNotes(
+      sessionId,
+      req.user.id,
+      notes
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Session notes updated successfully",
+      data: session,
+    });
+  } catch (error) {
+    console.error("Update session notes error:", error.message);
+
+    let statusCode = 500;
+
+    if (error.message === "Session not found") {
+      statusCode = 404;
+    } else if (
+      error.message ===
+      "Notes can only be updated while the session is in progress"
+    ) {
+      statusCode = 400;
+    }
+
+    return res.status(statusCode).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   createSession,
   getSessions,
   getSessionById,
   updateSession,
+  updateSessionStatus,
+  updateSessionNotes,
 };
