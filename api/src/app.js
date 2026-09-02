@@ -4,6 +4,7 @@ const helmet = require("helmet");
 const app = express();
 
 const authRoutes = require("./routes/auth.route");
+const studentRoutes = require("./routes/student.route");
 
 app.use(helmet());
 app.use(cors());
@@ -17,5 +18,6 @@ app.get("/api/health", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/students", studentRoutes);
 
 module.exports = app;
