@@ -1,10 +1,9 @@
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
-
-const supabase = require("./config/supabase");
-
 const app = express();
+
+const authRoutes = require("./routes/auth.route");
 
 app.use(helmet());
 app.use(cors());
@@ -16,5 +15,7 @@ app.get("/api/health", (req, res) => {
     message: "TutorFlow API is running",
   });
 });
+
+app.use("/api/auth", authRoutes);
 
 module.exports = app;
