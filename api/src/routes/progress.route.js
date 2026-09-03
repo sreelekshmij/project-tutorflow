@@ -1,7 +1,12 @@
 const express = require("express");
 
 const progressController = require("../controllers/progress.controller");
-const authenticate = require("../middlewares/auth");
+
+const {
+  authenticate,
+  authorize,
+} = require("../middlewares/auth");
+
 const validate = require("../middlewares/validate");
 
 const {
@@ -13,6 +18,7 @@ const router = express.Router();
 router.post(
   "/",
   authenticate,
+  authorize("tutor"),
   validate(createProgressSchema),
   progressController.createProgress
 );
@@ -20,6 +26,7 @@ router.post(
 router.get(
   "/student/:studentId",
   authenticate,
+  authorize("tutor"),
   progressController.getStudentProgress
 );
 

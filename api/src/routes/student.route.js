@@ -1,7 +1,12 @@
 const express = require("express");
 
 const studentController = require("../controllers/student.controller");
-const authenticate = require("../middlewares/auth");
+
+const {
+  authenticate,
+  authorize,
+} = require("../middlewares/auth");
+
 const validate = require("../middlewares/validate");
 
 const {
@@ -14,6 +19,7 @@ const router = express.Router();
 router.post(
   "/",
   authenticate,
+  authorize("tutor"),
   validate(createStudentSchema),
   studentController.createStudent
 );
@@ -21,18 +27,21 @@ router.post(
 router.get(
   "/",
   authenticate,
+  authorize("tutor"),
   studentController.getStudents
 );
 
 router.get(
   "/:studentId",
   authenticate,
+  authorize("tutor"),
   studentController.getStudentById
 );
 
 router.patch(
   "/:studentId",
   authenticate,
+  authorize("tutor"),
   validate(updateStudentSchema),
   studentController.updateStudent
 );
@@ -40,6 +49,7 @@ router.patch(
 router.delete(
   "/:studentId",
   authenticate,
+  authorize("tutor"),
   studentController.deleteStudent
 );
 

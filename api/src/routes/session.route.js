@@ -1,7 +1,12 @@
 const express = require("express");
 
 const sessionController = require("../controllers/session.controller");
-const authenticate = require("../middlewares/auth");
+
+const {
+  authenticate,
+  authorize,
+} = require("../middlewares/auth");
+
 const validate = require("../middlewares/validate");
 
 const {
@@ -16,6 +21,7 @@ const router = express.Router();
 router.post(
   "/",
   authenticate,
+  authorize("tutor"),
   validate(createSessionSchema),
   sessionController.createSession
 );
@@ -23,12 +29,14 @@ router.post(
 router.get(
   "/",
   authenticate,
+  authorize("tutor"),
   sessionController.getSessions
 );
 
 router.patch(
   "/:sessionId/status",
   authenticate,
+  authorize("tutor"),
   validate(updateSessionStatusSchema),
   sessionController.updateSessionStatus
 );
@@ -36,6 +44,7 @@ router.patch(
 router.patch(
   "/:sessionId/notes",
   authenticate,
+  authorize("tutor"),
   validate(updateSessionNotesSchema),
   sessionController.updateSessionNotes
 );
@@ -43,12 +52,14 @@ router.patch(
 router.get(
   "/:sessionId",
   authenticate,
+  authorize("tutor"),
   sessionController.getSessionById
 );
 
 router.patch(
   "/:sessionId",
   authenticate,
+  authorize("tutor"),
   validate(updateSessionSchema),
   sessionController.updateSession
 );
