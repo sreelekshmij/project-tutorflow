@@ -12,6 +12,9 @@ import TutorDashboard from "./pages/tutor/TutorDashboard/TutorDashboard";
 import Students from "./pages/tutor/Students/Students";
 import StudentDetails from "./pages/tutor/Students/StudentDetails";
 import EditStudent from "./pages/tutor/Students/EditStudent";
+import Sessions from "./pages/tutor/Sessions/Sessions";
+import ScheduleSession from "./pages/tutor/Sessions/ScheduleSession";
+import SessionDetails from "./pages/tutor/Sessions/SessionDetails";
 
 import StudentDashboard from "./pages/student/StudentDashboard/StudentDashboard";
 
@@ -51,6 +54,21 @@ function App() {
           <Route
             path="students/:studentId/edit"
             element={<EditStudent />}
+          />
+
+          <Route
+            path="sessions"
+            element={<Sessions />}
+          />
+
+          <Route
+            path="sessions/create"
+            element={<ScheduleSession />}
+          />
+
+          <Route
+            path="sessions/:sessionId"
+            element={<SessionDetails />}
           />
         </Route>
 

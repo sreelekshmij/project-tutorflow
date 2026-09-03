@@ -5,7 +5,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import toast from "react-hot-toast";
 
 import api from "../../../services/api";
-import { createStudentSchema } from "../../../validations/student.validation";
+import { createStudentSchema } from "./student.validation";
 
 import styles from "./Students.module.scss";
 

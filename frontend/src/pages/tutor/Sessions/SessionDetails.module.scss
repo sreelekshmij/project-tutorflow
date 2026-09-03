@@ -1,0 +1,254 @@
+.page {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.header {
+  margin-bottom: 28px;
+
+  h1 {
+    margin-top: 12px;
+    margin-bottom: 6px;
+    font-size: 28px;
+    color: #111827;
+  }
+
+  p {
+    color: #6b7280;
+    font-size: 14px;
+  }
+}
+
+.backButton {
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #4f46e5;
+  font-size: 14px;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.card {
+  margin-bottom: 20px;
+  padding: 24px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+}
+
+.sessionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+
+  h2 {
+    margin-bottom: 10px;
+    font-size: 22px;
+    color: #111827;
+  }
+}
+
+.status {
+  display: inline-flex;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.scheduled {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.inProgress {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.completed {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.aiReviewed {
+  background: #f5f3ff;
+  color: #7c3aed;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  span {
+    color: #6b7280;
+    font-size: 12px;
+  }
+
+  strong {
+    color: #111827;
+    font-size: 14px;
+  }
+}
+
+.cardHeader {
+  margin-bottom: 18px;
+
+  h2 {
+    margin-bottom: 5px;
+    font-size: 18px;
+    color: #111827;
+  }
+
+  p {
+    color: #6b7280;
+    font-size: 13px;
+  }
+}
+
+.notesBox {
+  min-height: 150px;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #f9fafb;
+
+  p {
+    color: #374151;
+    font-size: 14px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+  }
+}
+
+.emptyText {
+  color: #9ca3af !important;
+}
+
+.statusActions {
+  display: flex;
+  align-items: center;
+}
+
+.primaryButton,
+.completeButton {
+  padding: 11px 18px;
+  border: none;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.primaryButton {
+  background: #4f46e5;
+
+  &:hover:not(:disabled) {
+    background: #4338ca;
+  }
+}
+
+.completeButton {
+  background: #059669;
+
+  &:hover:not(:disabled) {
+    background: #047857;
+  }
+}
+
+.completedMessage {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  strong {
+    color: #111827;
+    font-size: 14px;
+  }
+
+  span {
+    color: #6b7280;
+    font-size: 13px;
+  }
+}
+
+.loadingState {
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  p {
+    color: #6b7280;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 800px) {
+  .infoGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 500px) {
+  .infoGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.notesHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.saveStatus {
+  color: #6b7280;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.notesTextarea {
+  width: 100%;
+  min-height: 240px;
+  padding: 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #111827;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.7;
+  resize: vertical;
+  outline: none;
+
+  &:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  }
+
+  &::placeholder {
+    color: #9ca3af;
+  }
+}

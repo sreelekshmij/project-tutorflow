@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 
 import api from "../../../services/api";
 import { useAuth } from "../../../context/AuthContext";
-import { loginSchema } from "../../../validations/auth.validation";
+import { loginSchema } from "../auth.validation";
 
 import styles from "./Login.module.scss";
 
