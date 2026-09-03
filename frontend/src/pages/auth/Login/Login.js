@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import toast from "react-hot-toast";
 
 import api from "../../../services/api";
 import { useAuth } from "../../../context/AuthContext";
@@ -27,6 +28,7 @@ const Login = () => {
       const { user, token } = response.data.data;
 
       login(user, token);
+      toast.success("Login successful!");
 
       if (user.role === "tutor") {
         navigate("/tutor/dashboard");
@@ -35,9 +37,7 @@ const Login = () => {
       }
     } catch (error) {
       console.error("Login error:", error);
-
-      // We'll improve API error handling later.
-      alert(
+      toast.error(
         error.response?.data?.message ||
         "Unable to login. Please try again."
       );

@@ -6,7 +6,7 @@ const ProtectedRoute = ({ children, allowedRole }) => {
   const { user } = useAuth();
 
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   if (allowedRole && user.role !== allowedRole) {
@@ -18,7 +18,7 @@ const ProtectedRoute = ({ children, allowedRole }) => {
       return <Navigate to="/student/dashboard" replace />;
     }
 
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return children;

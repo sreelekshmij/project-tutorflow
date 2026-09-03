@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import toast from "react-hot-toast";
 
 import api from "../../../services/api";
 import { useAuth } from "../../../context/AuthContext";
@@ -13,8 +14,6 @@ const SignUp = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  const [apiError, setApiError] = useState("");
-
   const {
     register,
     handleSubmit,
@@ -23,29 +22,29 @@ const SignUp = () => {
     resolver: yupResolver(signupSchema),
   });
 
-  const onSubmit = async (formData) => {
-    try {
-      setApiError("");
+const onSubmit = async (formData) => {
+  try {
+    const response = await api.post("/auth/signup", {
+      ...formData,
+      role: "tutor",
+    });
 
-      const response = await api.post("/auth/signup", {
-        ...formData,
-        role: "tutor",
-      });
+    const { user, token } = response.data.data;
 
-      const { user, token } = response.data.data;
+    login(user, token);
 
-      login(user, token);
+    toast.success("Tutor account created successfully!");
 
-      navigate("/tutor/dashboard");
-    } catch (error) {
-      console.error("Signup error:", error);
+    navigate("/tutor/dashboard");
+  } catch (error) {
+    console.error("Signup error:", error);
 
-      setApiError(
-        error.response?.data?.message ||
-          "Unable to create account. Please try again."
-      );
-    }
-  };
+    toast.error(
+      error.response?.data?.message ||
+        "Unable to create account. Please try again."
+    );
+  }
+};
 
   return (
     <div className={styles.signupPage}>
@@ -59,12 +58,6 @@ const SignUp = () => {
             Start managing your students and sessions with TutorFlow.
           </p>
         </div>
-
-        {apiError && (
-          <div className={styles.signupError}>
-            {apiError}
-          </div>
-        )}
 
         <form
           className={styles.signupForm}
@@ -134,7 +127,7 @@ const SignUp = () => {
 
         <div className={styles.loginLink}>
           <span>Already have an account?</span>{" "}
-          <Link to="/login">Login</Link>
+          <Link to="/">Login</Link>
         </div>
       </div>
     </div>

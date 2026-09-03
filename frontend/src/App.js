@@ -8,26 +8,51 @@ import {
 import Login from "./pages/auth/Login/Login";
 import SignUp from "./pages/auth/SignUp/SignUp";
 
-import TutorDashboard from "./pages/tutor/Dashboard/Dashboard";
-import StudentDashboard from "./pages/student/Dashboard/Dashboard";
+import TutorDashboard from "./pages/tutor/TutorDashboard/TutorDashboard";
+import Students from "./pages/tutor/Students/Students";
+import StudentDetails from "./pages/tutor/Students/StudentDetails";
+import EditStudent from "./pages/tutor/Students/EditStudent";
 
-import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
+import StudentDashboard from "./pages/student/StudentDashboard/StudentDashboard";
+
+import ProtectedRoute from "./components/ProtectedRoutes/ProtectedRoute";
+import TutorLayout from "./layouts/TutorLayout/TutorLayout";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
 
         <Route
-          path="/tutor/dashboard"
+          path="/tutor"
           element={
             <ProtectedRoute allowedRole="tutor">
-              <TutorDashboard />
+              <TutorLayout />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route
+            path="dashboard"
+            element={<TutorDashboard />}
+          />
+
+          <Route
+            path="students"
+            element={<Students />}
+          />
+
+          <Route
+            path="students/:studentId"
+            element={<StudentDetails />}
+          />
+
+          <Route
+            path="students/:studentId/edit"
+            element={<EditStudent />}
+          />
+        </Route>
 
         <Route
           path="/student/dashboard"

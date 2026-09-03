@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { Toaster } from "react-hot-toast";
 
 import App from "./App";
 import AuthProvider from "./context/AuthContext";
@@ -11,9 +12,16 @@ const root = ReactDOM.createRoot(
 );
 
 root.render(
-  <React.StrictMode>
-    <AuthProvider>
-      <App />
-    </AuthProvider>
-  </React.StrictMode>
-);
+  // <React.StrictMode>
+  <AuthProvider>
+    <App />
+
+    <Toaster
+      position="top-right"
+      toastOptions={{
+        duration: 3000,
+      }}
+    />
+  </AuthProvider>
+  // </React.StrictMode>
+);  

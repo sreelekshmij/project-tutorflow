@@ -1,0 +1,185 @@
+.page {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.header {
+  margin-bottom: 28px;
+
+  h1 {
+    margin-top: 12px;
+    margin-bottom: 6px;
+    font-size: 28px;
+    color: #111827;
+  }
+
+  p {
+    color: #6b7280;
+    font-size: 14px;
+  }
+}
+
+.backButton {
+  border: none;
+  background: transparent;
+  padding: 0;
+  color: #4f46e5;
+  font-size: 14px;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.card {
+  padding: 24px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+}
+
+.cardHeader {
+  margin-bottom: 24px;
+
+  h2 {
+    margin-bottom: 5px;
+    font-size: 18px;
+    color: #111827;
+  }
+
+  p {
+    color: #6b7280;
+    font-size: 13px;
+  }
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+
+  & + .formGroup {
+    margin-top: 20px;
+  }
+
+  label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #111827;
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+    transition:
+      border-color 0.2s,
+      box-shadow 0.2s;
+
+    &:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    &::placeholder {
+      color: #9ca3af;
+    }
+  }
+
+  textarea {
+    resize: vertical;
+  }
+}
+
+.error {
+  color: #dc2626;
+  font-size: 12px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.cancelButton,
+.saveButton {
+  padding: 11px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.cancelButton {
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #374151;
+
+  &:hover:not(:disabled) {
+    background: #f9fafb;
+  }
+}
+
+.saveButton {
+  border: none;
+  background: #4f46e5;
+  color: #ffffff;
+
+  &:hover:not(:disabled) {
+    background: #4338ca;
+  }
+}
+
+.loadingState {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+
+  p {
+    color: #6b7280;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 700px) {
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    flex-direction: column-reverse;
+  }
+
+  .cancelButton,
+  .saveButton {
+    width: 100%;
+  }
+}
