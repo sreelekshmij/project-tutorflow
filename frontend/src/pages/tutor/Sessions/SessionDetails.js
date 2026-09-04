@@ -212,6 +212,7 @@ const SessionDetails = () => {
   if (!session) {
     return null;
   }
+  console.log(session, session.student)
 
   const student = session.students;
   const profile = student?.profiles;

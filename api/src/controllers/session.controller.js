@@ -8,6 +8,8 @@ const createSession = async (req, res) => {
       topic,
     } = req.body;
 
+    console.log(req.body);
+
     const session = await sessionService.createSession({
       studentId,
       scheduledAt,

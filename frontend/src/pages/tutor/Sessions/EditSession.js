@@ -94,7 +94,7 @@ const EditSession = () => {
         {
           scheduledAt: new Date(
             formData.scheduledAt
-          ).toISOString(),
+          ),
           topic: formData.topic,
         },
         {

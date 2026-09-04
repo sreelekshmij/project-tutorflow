@@ -1,200 +1,254 @@
-import { useAuth } from "../../../context/AuthContext";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
+
+import api from "../../../services/api";
 
 import styles from "./TutorDashboard.module.scss";
 
 const TutorDashboard = () => {
-  const { user } = useAuth();
+  const [students, setStudents] = useState([]);
+  const [sessions, setSessions] = useState([]);
+
+  const [loading, setLoading] = useState(true);
+
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+
+      const token = localStorage.getItem("token");
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const [studentsResponse, sessionsResponse] =
+        await Promise.all([
+          api.get("/students", config),
+          api.get("/sessions", config),
+        ]);
+
+      setStudents(studentsResponse.data.data || []);
+      setSessions(sessionsResponse.data.data || []);
+    } catch (error) {
+      console.error("Fetch dashboard data error:", error);
+
+      toast.error(
+        error.response?.data?.message ||
+          "Unable to load dashboard data."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
+
+  const upcomingSessions = sessions
+    .filter(
+      (session) =>
+        session.status === "scheduled" ||
+        session.status === "in_progress"
+    )
+    .sort(
+      (a, b) =>
+        new Date(a.scheduled_at) -
+        new Date(b.scheduled_at)
+    );
+
+  const completedSessions = sessions.filter(
+    (session) =>
+      session.status === "completed" ||
+      session.status === "ai_reviewed"
+  );
+
+  const formatDateTime = (dateTime) => {
+    const date = new Date(dateTime);
+
+    return `${date.toLocaleDateString()} at ${date.toLocaleTimeString(
+      [],
+      {
+        hour: "2-digit",
+        minute: "2-digit",
+      }
+    )}`;
+  };
+
+  const formatStatus = (status) => {
+    return status
+      .replace("_", " ")
+      .replace(/\b\w/g, (letter) => letter.toUpperCase());
+  };
+
+  if (loading) {
+    return (
+      <div className={styles.page}>
+        <p className={styles.message}>
+          Loading dashboard...
+        </p>
+      </div>
+    );
+  }
 
   return (
-    <div className={styles.dashboard}>
-      {/* Header */}
+    <div className={styles.page}>
       <div className={styles.header}>
         <div>
-          <h1>Dashboard</h1>
-
+          <h1>Tutor Dashboard</h1>
           <p>
-            Welcome back, {user?.full_name || "Tutor"}! Here's an
-            overview of your tutoring activity.
+            Manage your students and upcoming learning sessions.
           </p>
         </div>
-
-        <button type="button" className={styles.primaryButton}>
-          + Schedule Session
-        </button>
       </div>
 
-      {/* Statistics */}
       <div className={styles.statsGrid}>
         <div className={styles.statCard}>
-          <div className={styles.statHeader}>
-            <span>Total Students</span>
-            <div className={styles.statIcon}>👥</div>
-          </div>
-
-          <strong>0</strong>
-
-          <span className={styles.statDescription}>
-            Students currently enrolled
+          <span className={styles.statLabel}>
+            Total Students
           </span>
+
+          <strong className={styles.statValue}>
+            {students.length}
+          </strong>
+
+          <Link to="/tutor/students">
+            View Students
+          </Link>
         </div>
 
         <div className={styles.statCard}>
-          <div className={styles.statHeader}>
-            <span>Upcoming Sessions</span>
-            <div className={styles.statIcon}>📅</div>
-          </div>
-
-          <strong>0</strong>
-
-          <span className={styles.statDescription}>
-            Sessions scheduled
+          <span className={styles.statLabel}>
+            Upcoming Sessions
           </span>
+
+          <strong className={styles.statValue}>
+            {upcomingSessions.length}
+          </strong>
+
+          <Link to="/tutor/sessions">
+            View Sessions
+          </Link>
         </div>
 
         <div className={styles.statCard}>
-          <div className={styles.statHeader}>
-            <span>Completed Sessions</span>
-            <div className={styles.statIcon}>✓</div>
-          </div>
-
-          <strong>0</strong>
-
-          <span className={styles.statDescription}>
-            Sessions completed
+          <span className={styles.statLabel}>
+            Completed Sessions
           </span>
-        </div>
 
-        <div className={styles.statCard}>
-          <div className={styles.statHeader}>
-            <span>AI Reviewed</span>
-            <div className={styles.statIcon}>✨</div>
-          </div>
+          <strong className={styles.statValue}>
+            {completedSessions.length}
+          </strong>
 
-          <strong>0</strong>
-
-          <span className={styles.statDescription}>
-            Sessions reviewed by AI
-          </span>
+          <Link to="/tutor/progress">
+            View Progress
+          </Link>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className={styles.contentGrid}>
-        {/* Upcoming Sessions */}
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <div>
-              <h2>Upcoming Sessions</h2>
-              <p>Your next scheduled tutoring sessions</p>
-            </div>
-
-            <button
-              type="button"
-              className={styles.textButton}
-            >
-              View All
-            </button>
+      <section className={styles.card}>
+        <div className={styles.cardHeader}>
+          <div>
+            <h2>Upcoming Sessions</h2>
+            <p>Your next scheduled sessions.</p>
           </div>
 
-          <div className={styles.emptyState}>
-            <div className={styles.emptyIcon}>📅</div>
+          <Link
+            to="/tutor/sessions"
+            className={styles.viewAll}
+          >
+            View All
+          </Link>
+        </div>
 
+        {upcomingSessions.length === 0 ? (
+          <div className={styles.emptyState}>
             <h3>No upcoming sessions</h3>
 
             <p>
-              You don't have any sessions scheduled yet.
+              Schedule a session with one of your students.
             </p>
 
-            <button
-              type="button"
-              className={styles.secondaryButton}
+            <Link
+              to="/tutor/sessions/create"
+              className={styles.primaryButton}
             >
-              Schedule a Session
-            </button>
+              Schedule Session
+            </Link>
           </div>
-        </section>
+        ) : (
+          <div className={styles.sessionList}>
+            {upcomingSessions.slice(0, 5).map((session) => (
+              <div
+                key={session.id}
+                className={styles.sessionItem}
+              >
+                <div>
+                  <h3>{session.topic}</h3>
 
-        {/* Students */}
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <div>
-              <h2>Recent Students</h2>
-              <p>Your recently added students</p>
-            </div>
+                  <p>
+                    Student:{" "}
+                    {session.students?.profiles?.full_name ||
+                      "Unknown Student"}
+                  </p>
 
-            <button
-              type="button"
-              className={styles.textButton}
-            >
-              View All
-            </button>
+                  <p>
+                    {formatDateTime(session.scheduled_at)}
+                  </p>
+                </div>
+
+                <div className={styles.sessionRight}>
+                  <span
+                    className={`${styles.status} ${
+                      styles[session.status]
+                    }`}
+                  >
+                    {formatStatus(session.status)}
+                  </span>
+
+                  <Link
+                    to={`/tutor/sessions/${session.id}`}
+                    className={styles.viewButton}
+                  >
+                    View
+                  </Link>
+                </div>
+              </div>
+            ))}
           </div>
+        )}
+      </section>
 
-          <div className={styles.emptyState}>
-            <div className={styles.emptyIcon}>👥</div>
-
-            <h3>No students yet</h3>
-
-            <p>
-              Add your first student to start managing their
-              learning journey.
-            </p>
-
-            <button
-              type="button"
-              className={styles.secondaryButton}
-            >
-              Add Student
-            </button>
-          </div>
-        </section>
-      </div>
-
-      {/* Quick Actions */}
       <section className={styles.quickActions}>
-        <div className={styles.sectionHeader}>
-          <div>
-            <h2>Quick Actions</h2>
-            <p>Common actions you may want to take</p>
-          </div>
-        </div>
+        <h2>Quick Actions</h2>
 
         <div className={styles.actionGrid}>
-          <button
-            type="button"
+          <Link
+            to="/tutor/students"
             className={styles.actionCard}
           >
-            <div className={styles.actionIcon}>👤</div>
+            <strong>Manage Students</strong>
+            <span>Add or update student profiles.</span>
+          </Link>
 
-            <div>
-              <h3>Add Student</h3>
-              <p>Create a new student profile</p>
-            </div>
-          </button>
-
-          <button
-            type="button"
+          <Link
+            to="/tutor/sessions/create"
             className={styles.actionCard}
           >
-            <div className={styles.actionIcon}>📅</div>
+            <strong>Schedule Session</strong>
+            <span>Schedule a new learning session.</span>
+          </Link>
 
-            <div>
-              <h3>Schedule Session</h3>
-              <p>Schedule a session with a student</p>
-            </div>
-          </button>
-
-          <button
-            type="button"
+          <Link
+            to="/tutor/progress"
             className={styles.actionCard}
           >
-            <div className={styles.actionIcon}>📈</div>
-
-            <div>
-              <h3>View Progress</h3>
-              <p>Track student learning progress</p>
-            </div>
-          </button>
+            <strong>Track Progress</strong>
+            <span>Review student learning progress.</span>
+          </Link>
         </div>
       </section>
     </div>

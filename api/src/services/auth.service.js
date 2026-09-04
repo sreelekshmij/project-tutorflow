@@ -78,7 +78,6 @@ const login = async ({ email, password }) => {
       "id, full_name, email, password_hash, role, created_at"
     )
     .eq("email", normalizedEmail)
-    .eq("role", role)
     .maybeSingle();
 
   if (userError) {

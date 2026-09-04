@@ -7,7 +7,7 @@ const createSessionSchema = Joi.object({
     "any.required": "Student ID is required",
   }),
 
-  scheduledAt: Joi.date().iso().required().messages({
+  scheduledAt: Joi.date().required().messages({
     "date.format": "Scheduled time must be a valid ISO date",
     "date.base": "Scheduled time must be a valid date",
     "any.required": "Scheduled time is required",
@@ -22,7 +22,7 @@ const createSessionSchema = Joi.object({
 });
 
 const updateSessionSchema = Joi.object({
-  scheduledAt: Joi.date().iso().messages({
+  scheduledAt: Joi.date().messages({
     "date.format": "Scheduled time must be a valid ISO date",
     "date.base": "Scheduled time must be a valid date",
   }),

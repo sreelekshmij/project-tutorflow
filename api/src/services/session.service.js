@@ -20,13 +20,18 @@ const createSession = async ({
 
     throw new Error(studentError.message);
   }
+  console.log("scheduledAt before Supabase:", scheduledAt);
+  console.log(
+    "scheduledAt type:",
+    typeof scheduledAt
+  );
 
   const { data: existingSession, error: existingSessionError } =
     await supabase
       .from("sessions")
       .select("id")
       .eq("tutor_id", tutorId)
-      .eq("scheduled_at", scheduledAt)
+      .eq("scheduled_at", scheduledAt.toISOString())
       .neq("status", "completed")
       .neq("status", "ai_reviewed")
       .maybeSingle();
@@ -39,12 +44,17 @@ const createSession = async ({
     throw new Error("Tutor already has a session scheduled at this time");
   }
 
+  console.log("scheduledAt before Supabase: ==== >", scheduledAt);
+  console.log(
+    "scheduledAt type: =>",
+    typeof scheduledAt
+  );
   const { data: session, error: sessionError } = await supabase
     .from("sessions")
     .insert({
       tutor_id: tutorId,
       student_id: studentId,
-      scheduled_at: scheduledAt,
+      scheduled_at: scheduledAt.toISOString(),
       topic: topic.trim(),
       status: "scheduled",
     })
@@ -95,7 +105,7 @@ const getSessions = async (tutorId) => {
       students (
         id,
         subject,
-        profiles (
+        profiles!students_profile_id_fkey (
           id,
           full_name,
           email
@@ -137,7 +147,7 @@ const getSessionById = async (sessionId, tutorId) => {
         current_level,
         learning_goals,
         weak_areas,
-        profiles (
+        profiles!students_profile_id_fkey (
           id,
           full_name,
           email
@@ -190,7 +200,7 @@ const updateSession = async (
   const updates = {};
 
   if (scheduledAt !== undefined) {
-    updates.scheduled_at = scheduledAt;
+    updates.scheduled_at = scheduledAt.toISOString();
   }
 
   if (topic !== undefined) {
@@ -205,7 +215,7 @@ const updateSession = async (
         .from("sessions")
         .select("id")
         .eq("tutor_id", tutorId)
-        .eq("scheduled_at", scheduledAt)
+        .eq("scheduled_at", scheduledAt.toISOString())
         .neq("id", sessionId)
         .neq("status", "completed")
         .neq("status", "ai_reviewed")
@@ -241,7 +251,16 @@ const updateSession = async (
       ai_homework,
       ai_next_focus,
       created_at,
-      updated_at
+      updated_at,
+      students (
+        id,
+        subject,
+        profiles!students_profile_id_fkey (
+          id,
+          full_name,
+          email
+        )
+      )
       `
     )
     .single();
@@ -311,7 +330,16 @@ const updateSessionStatus = async (
         ai_homework,
         ai_next_focus,
         created_at,
-        updated_at
+        updated_at,
+        students (
+        id,
+        subject,
+        profiles!students_profile_id_fkey (
+          id,
+          full_name,
+          email
+        )
+      )
         `
       )
       .single();
@@ -372,7 +400,16 @@ const updateSessionNotes = async (
         ai_homework,
         ai_next_focus,
         created_at,
-        updated_at
+        updated_at,
+        students (
+        id,
+        subject,
+        profiles!students_profile_id_fkey (
+          id,
+          full_name,
+          email
+        )
+      )
         `
       )
       .single();

@@ -103,7 +103,7 @@ const getStudents = async (tutorId) => {
       weak_areas,
       created_at,
       updated_at,
-      profiles (
+      profiles!students_profile_id_fkey (
         id,
         full_name,
         email
@@ -134,7 +134,7 @@ const getStudentById = async (studentId, tutorId) => {
       weak_areas,
       created_at,
       updated_at,
-      profiles (
+      profiles!students_profile_id_fkey (
         id,
         full_name,
         email
@@ -230,7 +230,7 @@ const updateStudent = async (studentId, tutorId, updates) => {
       weak_areas,
       created_at,
       updated_at,
-      profiles (
+      profiles!students_profile_id_fkey (
         id,
         full_name,
         email

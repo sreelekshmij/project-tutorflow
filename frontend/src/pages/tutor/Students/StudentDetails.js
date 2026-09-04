@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import api from "../../../services/api";
 
 import styles from "./StudentDetails.module.scss";
+import ConfirmModal from "../../../components/ConfirmModal/ConfirmModal";
 
 const StudentDetails = () => {
   const { studentId } = useParams();
@@ -15,6 +16,8 @@ const StudentDetails = () => {
   const [sessionsLoading, setSessionsLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const formatDateTime = (dateTime) => {
     const date = new Date(dateTime);
@@ -94,16 +97,8 @@ const StudentDetails = () => {
   }, [studentId]);
 
   const handleDelete = async () => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this student?"
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
     try {
-      setIsDeleting(true);
+      setDeleting(true);
 
       const token = localStorage.getItem("token");
 
@@ -112,7 +107,8 @@ const StudentDetails = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      toast.success("Student deleted successfully!");
+
+      toast.success("Student deleted successfully.");
 
       navigate("/tutor/students");
     } catch (error) {
@@ -122,8 +118,9 @@ const StudentDetails = () => {
         error.response?.data?.message ||
         "Unable to delete student."
       );
-
-      setIsDeleting(false);
+    } finally {
+      setDeleting(false);
+      setShowDeleteModal(false);
     }
   };
 
@@ -175,7 +172,7 @@ const StudentDetails = () => {
           <button
             type="button"
             className={styles.deleteButton}
-            onClick={handleDelete}
+            onClick={() => setShowDeleteModal(true)}
             disabled={isDeleting}
           >
             {isDeleting ? "Deleting..." : "Delete Student"}
@@ -312,11 +309,13 @@ const StudentDetails = () => {
 
                     <td>{session.topic}</td>
 
-                    <span
-                      className={`${styles.status} ${styles[session.status]}`}
-                    >
-                      {formatStatus(session.status)}
-                    </span>
+                    <td>
+  <span
+    className={`${styles.status} ${styles[session.status]}`}
+  >
+    {formatStatus(session.status)}
+  </span>
+</td>
 
                     <td>
                       <button
@@ -336,6 +335,17 @@ const StudentDetails = () => {
           </div>
         )}
       </div>
+      <ConfirmModal
+        isOpen={showDeleteModal}
+        title="Delete Student"
+        message={`Are you sure you want to delete ${student?.profiles?.full_name || "this student"
+          }? This action cannot be undone.`}
+        confirmText={deleting ? "Deleting..." : "Delete"}
+        cancelText="Cancel"
+        onConfirm={handleDelete}
+        onCancel={() => setShowDeleteModal(false)}
+        danger
+      />
     </div>
   );
 };

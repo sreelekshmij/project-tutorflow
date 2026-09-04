@@ -56,7 +56,7 @@ const ScheduleSession = () => {
 
         toast.error(
           error.response?.data?.message ||
-            "Unable to load students."
+          "Unable to load students."
         );
       } finally {
         setIsLoadingStudents(false);
@@ -72,11 +72,23 @@ const ScheduleSession = () => {
 
       const token = localStorage.getItem("token");
 
-      await api.post("/sessions", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const scheduledAt = new Date(
+        formData.scheduledAt
+      );
+
+      await api.post(
+        "/sessions",
+        {
+          studentId: formData.studentId,
+          scheduledAt,
+          topic: formData.topic,
         },
-      });
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       toast.success("Session scheduled successfully!");
 
@@ -86,7 +98,7 @@ const ScheduleSession = () => {
 
       toast.error(
         error.response?.data?.message ||
-          "Unable to schedule session."
+        "Unable to schedule session."
       );
     } finally {
       setIsSubmitting(false);

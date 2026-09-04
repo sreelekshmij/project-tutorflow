@@ -1,14 +1,28 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+
+import ConfirmModal from "../../../components/ConfirmModal/ConfirmModal";
+import { useAuth } from "../../../context/AuthContext";
 
 import api from "../../../services/api";
 
 import styles from "./StudentDashboard.module.scss";
 
 const StudentDashboard = () => {
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    setShowLogoutModal(false);
+    navigate("/");
+  };
 
   const fetchUpcomingSessions = async () => {
     try {
@@ -31,7 +45,7 @@ const StudentDashboard = () => {
 
       toast.error(
         error.response?.data?.message ||
-          "Unable to load upcoming sessions."
+        "Unable to load upcoming sessions."
       );
     } finally {
       setLoading(false);
@@ -61,6 +75,13 @@ const StudentDashboard = () => {
           <h1>Student Dashboard</h1>
           <p>View your upcoming learning sessions.</p>
         </div>
+        <button
+          type="button"
+          className={styles.logoutButton}
+          onClick={() => setShowLogoutModal(true)}
+        >
+          Logout
+        </button>
       </div>
 
       <section className={styles.card}>
@@ -122,6 +143,15 @@ const StudentDashboard = () => {
           View Homework
         </Link>
       </div>
+      <ConfirmModal
+        isOpen={showLogoutModal}
+        title="Logout"
+        message="Are you sure you want to logout?"
+        confirmText="Logout"
+        cancelText="Cancel"
+        onConfirm={handleLogout}
+        onCancel={() => setShowLogoutModal(false)}
+      />
     </div>
   );
 };

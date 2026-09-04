@@ -1,4 +1,6 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import ConfirmModal from "../../components/ConfirmModal/ConfirmModal";
 
 import { useAuth } from "../../context/AuthContext";
 
@@ -8,9 +10,12 @@ const TutorLayout = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
 
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
   const handleLogout = () => {
     logout();
-    navigate("/login");
+    setShowLogoutModal(false);
+    navigate("/");
   };
 
   return (
@@ -25,8 +30,7 @@ const TutorLayout = () => {
           <NavLink
             to="/tutor/dashboard"
             className={({ isActive }) =>
-              `${styles.navItem} ${
-                isActive ? styles.active : ""
+              `${styles.navItem} ${isActive ? styles.active : ""
               }`
             }
           >
@@ -36,8 +40,7 @@ const TutorLayout = () => {
           <NavLink
             to="/tutor/students"
             className={({ isActive }) =>
-              `${styles.navItem} ${
-                isActive ? styles.active : ""
+              `${styles.navItem} ${isActive ? styles.active : ""
               }`
             }
           >
@@ -47,8 +50,7 @@ const TutorLayout = () => {
           <NavLink
             to="/tutor/sessions"
             className={({ isActive }) =>
-              `${styles.navItem} ${
-                isActive ? styles.active : ""
+              `${styles.navItem} ${isActive ? styles.active : ""
               }`
             }
           >
@@ -58,8 +60,7 @@ const TutorLayout = () => {
           <NavLink
             to="/tutor/progress"
             className={({ isActive }) =>
-              `${styles.navItem} ${
-                isActive ? styles.active : ""
+              `${styles.navItem} ${isActive ? styles.active : ""
               }`
             }
           >
@@ -76,7 +77,7 @@ const TutorLayout = () => {
           <button
             type="button"
             className={styles.logoutButton}
-            onClick={handleLogout}
+            onClick={() => setShowLogoutModal(true)}
           >
             Logout
           </button>
@@ -86,6 +87,15 @@ const TutorLayout = () => {
       <main className={styles.mainContent}>
         <Outlet />
       </main>
+      <ConfirmModal
+        isOpen={showLogoutModal}
+        title="Logout"
+        message="Are you sure you want to logout?"
+        confirmText="Logout"
+        cancelText="Cancel"
+        onConfirm={handleLogout}
+        onCancel={() => setShowLogoutModal(false)}
+      />
     </div>
   );
 };
