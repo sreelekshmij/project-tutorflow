@@ -9,13 +9,18 @@ import Login from "./pages/auth/Login/Login";
 import SignUp from "./pages/auth/SignUp/SignUp";
 
 import TutorDashboard from "./pages/tutor/TutorDashboard/TutorDashboard";
+
 import Students from "./pages/tutor/Students/Students";
 import StudentDetails from "./pages/tutor/Students/StudentDetails";
 import EditStudent from "./pages/tutor/Students/EditStudent";
+
 import Sessions from "./pages/tutor/Sessions/Session";
 import ScheduleSession from "./pages/tutor/Sessions/ScheduleSession";
 import SessionDetails from "./pages/tutor/Sessions/SessionDetails";
 import EditSession from "./pages/tutor/Sessions/EditSession";
+
+import Progress from "./pages/tutor/Progress/Progress";
+import AddProgress from "./pages/tutor/Progress/AddProgress";
 
 import StudentDashboard from "./pages/student/StudentDashboard/StudentDashboard";
 
@@ -75,6 +80,16 @@ function App() {
           <Route
             path="sessions/:sessionId"
             element={<SessionDetails />}
+          />
+
+          <Route
+            path="progress"
+            element={<Progress />}
+          />
+
+          <Route
+            path="progress/add"
+            element={<AddProgress />}
           />
         </Route>
 
