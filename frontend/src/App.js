@@ -23,6 +23,8 @@ import Progress from "./pages/tutor/Progress/Progress";
 import AddProgress from "./pages/tutor/Progress/AddProgress";
 
 import StudentDashboard from "./pages/student/StudentDashboard/StudentDashboard";
+import CompletedSessions from "./pages/student/CompletedSessions/CompletedSessions";
+import Homework from "./pages/student/Homework/Homework";
 
 import ProtectedRoute from "./components/ProtectedRoutes/ProtectedRoute";
 import TutorLayout from "./layouts/TutorLayout/TutorLayout";
@@ -98,6 +100,24 @@ function App() {
           element={
             <ProtectedRoute allowedRole="student">
               <StudentDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/student/completed-sessions"
+          element={
+            <ProtectedRoute allowedRole="student">
+              <CompletedSessions />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/student/homework"
+          element={
+            <ProtectedRoute allowedRole="student">
+              <Homework />
             </ProtectedRoute>
           }
         />
