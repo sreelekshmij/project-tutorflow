@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 
 import api from "../../../services/api";
 
-import styles from "./Sessions.module.scss";
+import styles from "./Session.module.scss";
 
 const Sessions = () => {
   const navigate = useNavigate();

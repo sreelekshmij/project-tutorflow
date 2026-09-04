@@ -44,7 +44,7 @@ const SessionDetails = () => {
 
       toast.error(
         error.response?.data?.message ||
-          "Unable to load session."
+        "Unable to load session."
       );
 
       navigate("/tutor/sessions");
@@ -93,7 +93,7 @@ const SessionDetails = () => {
 
       toast.error(
         error.response?.data?.message ||
-          "Unable to save notes."
+        "Unable to save notes."
       );
     } finally {
       setIsSavingNotes(false);
@@ -146,7 +146,7 @@ const SessionDetails = () => {
 
       toast.error(
         error.response?.data?.message ||
-          "Unable to update session status."
+        "Unable to update session status."
       );
     } finally {
       setIsUpdatingStatus(false);
@@ -396,6 +396,19 @@ const SessionDetails = () => {
             </div>
           )}
         </div>
+
+        {session.status !== "completed" &&
+          session.status !== "ai_reviewed" && (
+            <button
+              type="button"
+              onClick={() =>
+                navigate(`/tutor/sessions/${session.id}/edit`)
+              }
+              className={styles.editButton}
+            >
+              Edit Session
+            </button>
+          )}
       </section>
     </div>
   );
