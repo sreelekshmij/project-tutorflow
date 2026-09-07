@@ -69,7 +69,7 @@ const Progress = () => {
             const token = localStorage.getItem("token");
 
             const response = await api.get(
-                `/progress/${studentId}`,
+                `/progress/student/${studentId}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
