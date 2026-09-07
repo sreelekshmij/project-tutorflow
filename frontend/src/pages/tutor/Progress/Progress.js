@@ -19,6 +19,9 @@ const Progress = () => {
 
     const [studentsLoading, setStudentsLoading] = useState(true);
     const [progressLoading, setProgressLoading] = useState(false);
+    const [isGeneratingSummary, setIsGeneratingSummary] = useState(false);
+
+    const [aiSummary, setAiSummary] = useState(null);
 
     const fetchStudents = async () => {
         try {
@@ -60,6 +63,7 @@ const Progress = () => {
     const fetchStudentProgress = async (studentId) => {
         if (!studentId) {
             setProgress([]);
+            setAiSummary(null);
             return;
         }
 
@@ -78,6 +82,9 @@ const Progress = () => {
             );
 
             setProgress(response.data.data || []);
+
+            // Clear the previous student's AI summary
+            setAiSummary(null);
         } catch (error) {
             console.error("Fetch progress error:", error);
 
@@ -87,8 +94,57 @@ const Progress = () => {
             );
 
             setProgress([]);
+            setAiSummary(null);
         } finally {
             setProgressLoading(false);
+        }
+    };
+
+    const handleGenerateSummary = async () => {
+        if (!selectedStudentId) {
+            toast.error("Please select a student.");
+            return;
+        }
+
+        if (progress.length === 0) {
+            toast.error(
+                "At least one progress record is required."
+            );
+            return;
+        }
+
+        try {
+            setIsGeneratingSummary(true);
+
+            const token = localStorage.getItem("token");
+
+            const response = await api.post(
+                `/ai/students/${selectedStudentId}/progress-summary`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            setAiSummary(response.data.data);
+
+            toast.success(
+                "AI progress summary generated successfully."
+            );
+        } catch (error) {
+            console.error(
+                "Generate AI progress summary error:",
+                error
+            );
+
+            toast.error(
+                error.response?.data?.message ||
+                "Unable to generate AI progress summary."
+            );
+        } finally {
+            setIsGeneratingSummary(false);
         }
     };
 
@@ -125,11 +181,13 @@ const Progress = () => {
                 <button
                     type="button"
                     className={styles.primaryButton}
-                    onClick={() => navigate(
-                        selectedStudentId
-                            ? `/tutor/progress/add?studentId=${selectedStudentId}`
-                            : "/tutor/progress/add"
-                    )}
+                    onClick={() =>
+                        navigate(
+                            selectedStudentId
+                                ? `/tutor/progress/add?studentId=${selectedStudentId}`
+                                : "/tutor/progress/add"
+                        )
+                    }
                 >
                     Add Progress
                 </button>
@@ -166,19 +224,19 @@ const Progress = () => {
                 </div>
             </div>
 
-            {
-                !selectedStudentId ? (
-                    <div className={styles.emptyState}>
-                        <h3>Select a student</h3>
-                        <p>
-                            Select a student above to view their progress.
-                        </p>
-                    </div>
-                ) : progressLoading ? (
-                    <div className={styles.emptyState}>
-                        <p>Loading progress...</p>
-                    </div>
-                ) : (
+            {!selectedStudentId ? (
+                <div className={styles.emptyState}>
+                    <h3>Select a student</h3>
+                    <p>
+                        Select a student above to view their progress.
+                    </p>
+                </div>
+            ) : progressLoading ? (
+                <div className={styles.emptyState}>
+                    <p>Loading progress...</p>
+                </div>
+            ) : (
+                <>
                     <div className={styles.card}>
                         <div className={styles.sectionHeader}>
                             <div>
@@ -195,6 +253,21 @@ const Progress = () => {
                                         : "progress records"}
                                 </p>
                             </div>
+
+                            {progress.length > 0 && (
+                                <button
+                                    type="button"
+                                    className={styles.aiButton}
+                                    onClick={handleGenerateSummary}
+                                    disabled={isGeneratingSummary}
+                                >
+                                    {isGeneratingSummary
+                                        ? "Generating..."
+                                        : aiSummary
+                                            ? "Regenerate AI Summary"
+                                            : "Generate AI Summary"}
+                                </button>
+                            )}
                         </div>
 
                         {progress.length === 0 ? (
@@ -234,7 +307,9 @@ const Progress = () => {
                                         {progress.map((record) => (
                                             <tr key={record.id}>
                                                 <td>
-                                                    {formatDate(record.created_at)}
+                                                    {formatDate(
+                                                        record.created_at
+                                                    )}
                                                 </td>
 
                                                 <td>{record.topic}</td>
@@ -247,7 +322,8 @@ const Progress = () => {
                                                 </td>
 
                                                 <td>
-                                                    {record.sessions?.topic || "—"}
+                                                    {record.sessions?.topic ||
+                                                        "—"}
                                                 </td>
 
                                                 <td>
@@ -260,9 +336,73 @@ const Progress = () => {
                             </div>
                         )}
                     </div>
-                )
-            }
-        </div >
+
+                    {aiSummary && (
+                        <div className={styles.aiCard}>
+                            <div className={styles.aiHeader}>
+                                <div>
+                                    <h2>AI Progress Summary</h2>
+                                    <p>
+                                        AI-generated insights based on the
+                                        student's progress records.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className={styles.aiSection}>
+                                <h3>Overall Progress</h3>
+
+                                <p>
+                                    {aiSummary.summary}
+                                </p>
+                            </div>
+
+                            <div className={styles.aiSection}>
+                                <h3>Strengths</h3>
+
+                                <ul>
+                                    {aiSummary.strengths?.map(
+                                        (strength, index) => (
+                                            <li key={index}>
+                                                {strength}
+                                            </li>
+                                        )
+                                    )}
+                                </ul>
+                            </div>
+
+                            <div className={styles.aiSection}>
+                                <h3>Areas to Improve</h3>
+
+                                <ul>
+                                    {aiSummary.areasToImprove?.map(
+                                        (area, index) => (
+                                            <li key={index}>
+                                                {area}
+                                            </li>
+                                        )
+                                    )}
+                                </ul>
+                            </div>
+
+                            <div className={styles.aiSection}>
+                                <h3>Recommended Focus</h3>
+
+                                <ul>
+                                    {aiSummary.recommendations?.map(
+                                        (recommendation, index) => (
+                                            <li key={index}>
+                                                {recommendation}
+                                            </li>
+                                        )
+                                    )}
+                                </ul>
+                            </div>
+                        </div>
+                    )}
+                </>
+            )}
+        </div>
     );
 };
 

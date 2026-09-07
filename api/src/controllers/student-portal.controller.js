@@ -60,9 +60,11 @@ const getCompletedSessions = async (req, res) => {
 
 const getHomework = async (req, res) => {
   try {
+    const studentProfileId = req.user.userId;
+
     const homework =
       await studentPortalService.getHomework(
-        req.user.id
+        studentProfileId
       );
 
     return res.status(200).json({
@@ -70,16 +72,11 @@ const getHomework = async (req, res) => {
       data: homework,
     });
   } catch (error) {
-    console.error("Get homework error:", error.message);
+    console.error("Get homework error:", error);
 
-    const statusCode =
-      error.message === "Student profile not found"
-        ? 404
-        : 500;
-
-    return res.status(statusCode).json({
+    return res.status(500).json({
       success: false,
-      message: error.message,
+      message: error.message || "Unable to get homework.",
     });
   }
 };

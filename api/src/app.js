@@ -8,6 +8,7 @@ const studentRoutes = require("./routes/student.route");
 const sessionRoutes = require("./routes/session.route");
 const progressRoutes = require("./routes/progress.route");
 const studentPortalRoutes = require("./routes/student-portal.route");
+const aiRoutes = require("./routes/ai.route");
 
 app.use(helmet());
 app.use(cors());
@@ -25,5 +26,6 @@ app.use("/api/students", studentRoutes);
 app.use("/api/sessions", sessionRoutes);
 app.use("/api/progress", progressRoutes);
 app.use("/api/student-portal", studentPortalRoutes);
+app.use("/api/ai", aiRoutes);
 
 module.exports = app;

@@ -18,6 +18,8 @@ const SessionDetails = () => {
     useState(false);
   const [isSavingNotes, setIsSavingNotes] = useState(false);
   const [notesSaved, setNotesSaved] = useState(false);
+  const [isGeneratingPlan, setIsGeneratingPlan] = useState(false);
+  const [isGeneratingDebrief, setIsGeneratingDebrief] = useState(false);
 
   const notesTimerRef = useRef(null);
 
@@ -151,6 +153,73 @@ const SessionDetails = () => {
       );
     } finally {
       setIsUpdatingStatus(false);
+    }
+  };
+
+  const handleGeneratePlan = async () => {
+    try {
+      setIsGeneratingPlan(true);
+
+      const token = localStorage.getItem("token");
+
+      const response = await api.post(
+        `/ai/sessions/${sessionId}/plan`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setSession(response.data.data);
+
+      toast.success("AI lesson plan generated successfully.");
+    } catch (error) {
+      console.error("Generate AI plan error:", error);
+
+      toast.error(
+        error.response?.data?.message ||
+        "Unable to generate AI lesson plan."
+      );
+    } finally {
+      setIsGeneratingPlan(false);
+    }
+  };
+
+  const handleGenerateDebrief = async () => {
+    try {
+      setIsGeneratingDebrief(true);
+
+      const token = localStorage.getItem("token");
+
+      const response = await api.post(
+        `/ai/sessions/${sessionId}/debrief`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setSession(response.data.data);
+
+      toast.success(
+        "AI session debrief generated successfully."
+      );
+    } catch (error) {
+      console.error(
+        "Generate AI debrief error:",
+        error
+      );
+
+      toast.error(
+        error.response?.data?.message ||
+        "Unable to generate AI session debrief."
+      );
+    } finally {
+      setIsGeneratingDebrief(false);
     }
   };
 
@@ -292,6 +361,80 @@ const SessionDetails = () => {
 
       <section className={styles.card}>
         <div className={styles.cardHeader}>
+          <div>
+            <h2>AI Lesson Plan</h2>
+            <p>
+              Generate a personalized lesson plan based on the
+              student's learning profile.
+            </p>
+          </div>
+
+          {session.status === "scheduled" && (
+            <button
+              type="button"
+              className={styles.aiButton}
+              onClick={handleGeneratePlan}
+              disabled={isGeneratingPlan}
+            >
+              {isGeneratingPlan
+                ? "Generating..."
+                : session.ai_plan
+                  ? "Regenerate Plan"
+                  : "Generate AI Plan"}
+            </button>
+          )}
+        </div>
+
+        {session.ai_plan ? (
+          <div className={styles.aiContent}>
+            <div className={styles.aiSection}>
+              <h3>Learning Objectives</h3>
+
+              <ul>
+                {session.ai_plan.objectives?.map(
+                  (objective, index) => (
+                    <li key={index}>{objective}</li>
+                  )
+                )}
+              </ul>
+            </div>
+
+            <div className={styles.aiSection}>
+              <h3>Lesson Outline</h3>
+
+              <ol>
+                {session.ai_plan.lessonOutline?.map(
+                  (step, index) => (
+                    <li key={index}>{step}</li>
+                  )
+                )}
+              </ol>
+            </div>
+
+            <div className={styles.aiSection}>
+              <h3>Practice Questions</h3>
+
+              <ol>
+                {session.ai_plan.practiceQuestions?.map(
+                  (question, index) => (
+                    <li key={index}>{question}</li>
+                  )
+                )}
+              </ol>
+            </div>
+          </div>
+        ) : (
+          <div className={styles.aiEmpty}>
+            <p>
+              No AI lesson plan has been generated for this
+              session yet.
+            </p>
+          </div>
+        )}
+      </section>
+
+      <section className={styles.card}>
+        <div className={styles.cardHeader}>
           <div className={styles.notesHeader}>
             <div>
               <h2>Session Notes</h2>
@@ -332,6 +475,63 @@ const SessionDetails = () => {
                 No session notes yet.
               </p>
             )}
+          </div>
+        )}
+      </section>
+
+      <section className={styles.card}>
+        <div className={styles.cardHeader}>
+          <div>
+            <h2>AI Session Debrief</h2>
+            <p>
+              Generate a summary, homework, and next-session
+              focus from the session notes.
+            </p>
+          </div>
+
+          {session.status === "completed" && (
+            <button
+              type="button"
+              className={styles.aiButton}
+              onClick={handleGenerateDebrief}
+              disabled={isGeneratingDebrief}
+            >
+              {isGeneratingDebrief
+                ? "Generating..."
+                : "Generate AI Debrief"}
+            </button>
+          )}
+        </div>
+
+        {session.ai_summary ? (
+          <div className={styles.aiContent}>
+            <div className={styles.aiSection}>
+              <h3>Session Summary</h3>
+              <p>{session.ai_summary}</p>
+            </div>
+
+            <div className={styles.aiSection}>
+              <h3>Homework</h3>
+
+              <ul>
+                {session.ai_homework?.map(
+                  (homework, index) => (
+                    <li key={index}>{homework}</li>
+                  )
+                )}
+              </ul>
+            </div>
+
+            <div className={styles.aiSection}>
+              <h3>Next Session Focus</h3>
+              <p>{session.ai_next_focus}</p>
+            </div>
+          </div>
+        ) : (
+          <div className={styles.aiEmpty}>
+            <p>
+              No AI debrief has been generated for this session yet.
+            </p>
           </div>
         )}
       </section>

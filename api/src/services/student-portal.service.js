@@ -96,27 +96,28 @@ const getHomework = async (studentProfileId) => {
     throw new Error(studentError.message);
   }
 
-  const { data: sessions, error: sessionsError } = await supabase
+  const { data, error } = await supabase
     .from("sessions")
-    .select(
-      `
+    .select(`
       id,
       scheduled_at,
       topic,
       ai_homework,
-      ai_next_focus
-      `
-    )
+      ai_next_focus,
+      students (
+        id,
+        subject
+      )
+    `)
     .eq("student_id", student.id)
-    .eq("status", "ai_reviewed")
     .not("ai_homework", "is", null)
     .order("scheduled_at", { ascending: false });
 
-  if (sessionsError) {
-    throw new Error(sessionsError.message);
+  if (error) {
+    throw new Error(error.message);
   }
 
-  return sessions;
+  return data;
 };
 
 module.exports = {
