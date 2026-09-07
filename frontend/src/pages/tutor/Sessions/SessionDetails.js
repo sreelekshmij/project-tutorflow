@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -212,7 +213,6 @@ const SessionDetails = () => {
   if (!session) {
     return null;
   }
-  console.log(session, session.student)
 
   const student = session.students;
   const profile = student?.profiles;

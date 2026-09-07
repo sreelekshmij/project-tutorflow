@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -15,7 +16,6 @@ const StudentDetails = () => {
   const [sessions, setSessions] = useState([]);
   const [sessionsLoading, setSessionsLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
-  const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
@@ -173,9 +173,9 @@ const StudentDetails = () => {
             type="button"
             className={styles.deleteButton}
             onClick={() => setShowDeleteModal(true)}
-            disabled={isDeleting}
+            disabled={deleting}
           >
-            {isDeleting ? "Deleting..." : "Delete Student"}
+            {deleting ? "Deleting..." : "Delete Student"}
           </button>
         </div>
       </div>
@@ -310,12 +310,12 @@ const StudentDetails = () => {
                     <td>{session.topic}</td>
 
                     <td>
-  <span
-    className={`${styles.status} ${styles[session.status]}`}
-  >
-    {formatStatus(session.status)}
-  </span>
-</td>
+                      <span
+                        className={`${styles.status} ${styles[session.status]}`}
+                      >
+                        {formatStatus(session.status)}
+                      </span>
+                    </td>
 
                     <td>
                       <button
